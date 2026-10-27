@@ -18,9 +18,9 @@ Bug fixes
 
 - Add ``alternatives.item_updated`` to the typed event list so
   :doc:`plugins/hook` can listen to it. :bug:`7036`
-- :doc:`plugins/export`, :doc:`plugins/info`: The ``--include-keys`` option
-  now expands glob patterns such as ``mb*`` as documented, instead of treating
-  them as literal field names. :bug:`5411`
+- :doc:`plugins/export`, :doc:`plugins/info`: The ``--include-keys`` option now
+  expands glob patterns such as ``mb*`` as documented, instead of treating them
+  as literal field names. :bug:`5411`
 
 ..
     For plugin developers
