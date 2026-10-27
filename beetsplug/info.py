@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from fnmatch import fnmatchcase
 from typing import TYPE_CHECKING, Any, Literal, Protocol
 
 import mediafile
@@ -55,6 +56,25 @@ def tag_fields() -> set[str]:
     return fields
 
 
+def has_glob(key: str) -> bool:
+    return any(c in key for c in "*?[")
+
+
+def expand_keys(keys: list[str], available: Iterable[str]) -> list[str]:
+    """Expand glob patterns in `keys` against the `available` field names.
+
+    Keys without wildcards are kept as-is, even if they are not available.
+    """
+    available = sorted(available)
+    expanded: list[str] = []
+    for key in keys:
+        if has_glob(key):
+            expanded.extend(k for k in available if fnmatchcase(k, key))
+        else:
+            expanded.append(key)
+    return list(dict.fromkeys(expanded))
+
+
 def tag_data_emitter(path: bytes) -> DataEmitter:
     def emitter(
         included_keys: Literal["*"] | list[str],
@@ -63,7 +83,7 @@ def tag_data_emitter(path: bytes) -> DataEmitter:
         if included_keys == "*":
             fields = tag_fields()
         else:
-            fields = included_keys
+            fields = expand_keys(included_keys, tag_fields())
         if "images" in fields:
             # We can't serialize the image data.
             fields.remove("images")
@@ -94,6 +114,10 @@ def library_data_emitter(model: LibModel) -> DataEmitter:
     def emitter(
         included_keys: Literal["*"] | list[str],
     ) -> tuple[JSONDict, LibModel]:
+        if included_keys != "*" and any(map(has_glob, included_keys)):
+            included_keys = expand_keys(
+                included_keys, model.keys(computed=True)
+            )
         data = dict(model.formatted(included_keys=included_keys))
 
         return data, model
