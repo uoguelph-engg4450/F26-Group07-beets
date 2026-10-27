@@ -9,17 +9,6 @@
 | Presentation topic | GitLab CI/CD |
 | Selected issue | _fill this in once your group has chosen_ |
 
-## Team members
-
-| Name | GitHub |
-| --- | --- |
-| Razan Al Hussami | _not on file yet_ |
-| Tooba Amir | [@mashwaniat](https://github.com/mashwaniat) |
-| Fwanda Abdelmesieh | [@FwandaA](https://github.com/FwandaA) |
-| Aisha Ahmed | [@AishaZAhmed](https://github.com/AishaZAhmed) |
-| Aryan Ashraf | _not on file yet_ |
-| Nimran Ghauri | _not on file yet_ |
-| Taha Irfan | _not on file yet_ |
 
 ## How to work in this repository
 
