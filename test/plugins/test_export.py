@@ -67,3 +67,41 @@ class ExportPluginTest(IOMixin, PluginTestCase):
                 txt = details.text
                 assert tag in self.test_values, tag
                 assert self.test_values[tag] == txt, txt
+
+    def create_mb_item(self):
+        (item,) = self.add_item_fixtures()
+        item.artist = "xartist"
+        item.title = "xtitle"
+        item.mb_trackid = "xtrackid"
+        item.mb_albumid = "xalbumid"
+        item.write()
+        item.store()
+        return item
+
+    def assert_mb_glob_expanded(self, json_data):
+        assert "mb*" not in json_data
+        assert json_data["title"] == "xtitle"
+        assert json_data["mb_trackid"] == "xtrackid"
+        assert json_data["mb_albumid"] == "xalbumid"
+        for key in json_data:
+            assert key == "title" or key.startswith("mb"), key
+
+    def test_include_keys_glob_tags(self):
+        item1 = self.create_mb_item()
+        out = self.run_with_output("export", "-i", "title,mb*", item1.artist)
+        self.assert_mb_glob_expanded(json.loads(out)[0])
+
+    def test_include_keys_glob_library(self):
+        item1 = self.create_mb_item()
+        out = self.run_with_output(
+            "export", "-l", "-i", "title,mb*", item1.artist
+        )
+        self.assert_mb_glob_expanded(json.loads(out)[0])
+
+    def test_include_keys_plain_keys_unchanged(self):
+        item1 = self.create_mb_item()
+        out = self.run_with_output(
+            "export", "-l", "-i", "mb_trackid,nonexistent", item1.artist
+        )
+        json_data = json.loads(out)[0]
+        assert json_data == {"mb_trackid": "xtrackid", "nonexistent": ""}

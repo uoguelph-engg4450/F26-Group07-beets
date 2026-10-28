@@ -23,15 +23,15 @@ library:
     $ beet info beatles
 
 If you just want to see specific properties you can use the ``--include-keys``
-option to filter them. The argument is a comma-separated list of field names.
-For example:
+option to filter them. The argument is a comma-separated list of field names or
+simple glob patterns where ``*`` matches any string. For example:
 
 ::
 
-    $ beet info -i 'title,mb_artistid' beatles
+    $ beet info -i 'title,mb*' beatles
 
-Will only show the ``title`` and ``mb_artistid`` properties. You can add the
-``-i`` option multiple times to the command line.
+Will only show the ``title`` property and all properties starting with ``mb``.
+You can add the ``-i`` option multiple times to the command line.
 
 Additional command-line options include:
 
