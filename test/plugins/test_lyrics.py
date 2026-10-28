@@ -590,6 +590,41 @@ class TestLRCLibLyrics(LyricsBackendTest):
     ITEM_DURATION = 999
     SYNCED = "[00:00.00] synced"
 
+    @pytest.mark.parametrize(
+        "duration, synced, expected",
+        [
+            pytest.param(
+                149.0,
+                '[00:17.23]I said "I love you" first\r\n'
+                "[02:23.59]Feel it every time you are around\r\n\r\n",
+                True,
+                id="trailing-blank-lines",
+            ),
+            pytest.param(
+                149.0,
+                "[02:29.00] ",
+                True,
+                id="empty-text-timestamp",
+            ),
+            pytest.param(
+                149.0,
+                "[02:30.00] within duration tolerance",
+                True,
+                id="timestamp-within-duration-tolerance",
+            ),
+            pytest.param(
+                149.0,
+                "[02:38.00] outside duration tolerance",
+                False,
+                id="timestamp-outside-duration-tolerance",
+            ),
+        ],
+    )
+    def test_verify_synced_lyrics(self, duration, synced, expected):
+        result = lyrics.LRCLyrics.verify_synced_lyrics(duration, synced)
+
+        assert bool(result) is expected
+
     @pytest.fixture(scope="class")
     def backend_name(self):
         return "lrclib"
