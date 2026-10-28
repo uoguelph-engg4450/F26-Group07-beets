@@ -283,15 +283,15 @@ class LRCLyrics:
         cls, duration: float, lyrics: str | None
     ) -> str | None:
         """Accept synced lyrics only when the final timestamp fits duration."""
-        cleaned_lyrics = lyrics.rstrip() if lyrics else ""
-
-        if cleaned_lyrics and (
-            m := Lyrics.LINE_PARTS_PAT.match(cleaned_lyrics.splitlines()[-1])
-        ):
+        lines = lyrics.rstrip().splitlines() if lyrics else []
+        if lines and (m := Lyrics.LINE_PARTS_PAT.match(lines[-1])):
             ts, _ = m.groups()
             if ts:
                 mm, ss = map(float, ts.strip("[]").split(":"))
-                if 60 * mm + ss <= duration:
+                if (
+                    60 * mm + ss
+                    <= duration * (1 + cls.DURATION_DIFF_TOLERANCE)
+                ):
                     return lyrics
 
         return None
