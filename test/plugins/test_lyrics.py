@@ -705,7 +705,11 @@ class TestLRCLibLyrics(LyricsBackendTest):
                 id="prefer match with synced lyrics",
             ),
             pytest.param(
-                [lyrics_match(syncedLyrics="[00:15.00] first line\n[02:45.00] last line\n\n")],
+                [
+                    lyrics_match(
+                        syncedLyrics="[00:15.00] first line\n[02:45.00] last line\n\n"
+                    )
+                ],
                 "[00:15.00] first line\n[02:45.00] last line\n",
                 id="synced-lyrics-with-trailing-blank-line",
             ),
@@ -721,10 +725,9 @@ class TestLRCLibLyrics(LyricsBackendTest):
             assert lyrics.text == expected_lyrics
 
     def test_verify_synced_lyrics_whitespace_only(self):
-        result = lyrics.LRCLyrics.verify_synced_lyrics(
-            180.0, "\n\n   "
-        )
+        result = lyrics.LRCLyrics.verify_synced_lyrics(180.0, "\n\n   ")
         assert result is None
+
 
 class TestLRCMuxLyrics(LyricsBackendTest):
     SYNCED = "[00:00.00] synced"
